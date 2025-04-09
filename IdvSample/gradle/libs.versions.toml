@@ -1,0 +1,39 @@
+[versions]
+agp = "8.3.2"
+kotlin = "1.9.0"
+coreKtx = "1.9.0"
+junit = "4.13.2"
+junitVersion = "1.2.1"
+espressoCore = "3.6.1"
+appcompat = "1.7.0"
+material = "1.12.0"
+activity = "1.8.0"
+constraintlayout = "2.2.1"
+barcodeScanning = "17.3.0"
+regulaCoreDocReader = "7.5.+"
+regulaCoreFace = "6.4.+"
+regulaIdvDocReader = "1.0.29"
+regulaIdvFace = "1.0.27"
+regulaIdvApi = "1.0.17"
+
+[libraries]
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+android-vision = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "barcodeScanning" }
+regula-core-docreader = { group = "com.regula.documentreader.core", name = "fullrfid", version.ref = "regulaCoreDocReader" }
+regula-core-face = { group = "com.regula.face.core", name = "basic", version.ref = "regulaCoreFace" }
+regula-idv-docreader = { group = "com.regula.idv", name = "docreader", version.ref = "regulaIdvDocReader" }
+regula-idv-face = { group = "com.regula.idv", name = "face", version.ref = "regulaIdvFace" }
+regula-idv-api = { group = "com.regula.idv", name = "api", version.ref = "regulaIdvApi" }
+
+
+[plugins]
+androidApplication = { id = "com.android.application", version.ref = "agp" }
+jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
