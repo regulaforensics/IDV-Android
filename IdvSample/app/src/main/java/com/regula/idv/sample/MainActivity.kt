@@ -43,11 +43,11 @@ class MainActivity : AppCompatActivity() {
         private const val FOLDER = "Pictures"
         private const val PERMISSION_REQUEST_CODE = 1
 
-        private const val HOST = "idv.regula.app"
-        private const val USER_NAME = "test.android"
-        private const val PASSWORD = "123qweasd"
+        private const val HOST = "..."
+        private const val USER_NAME = "..."
+        private const val PASSWORD = "..."
         private const val IS_SECURE = true
-        private const val WORKFLOW_ID = "dd3781f5aa96b100bcd36"
+        private const val WORKFLOW_ID = "..."
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
