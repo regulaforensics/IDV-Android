@@ -28,7 +28,7 @@ Before integrating the SDK, ensure the following:
    url = uri("https://maven.regulaforensics.com/RegulaDocumentReader/Beta")
    }
 
-2. Copy **regula.license** and **db.dat** files to `assets/Regula` folder.
+2. Copy **regula.license** and **db.dat** files to `app/src/main/assets/Regula` folder.
 
 3. Enable view and data bingings features in your **app-level** `build.gradle.kts` by adding to `android` section:
 
@@ -163,7 +163,28 @@ With metadata:
 ```kotlin
 val metadata = JSONObject()
 metadata.put("key1", "value1")
-IdvSdk.instance().startWorkflow(this, metadata) { sessionResult, error ->
+val scenarioConfig = IdvStartWorkflowConfig.Builder()
+    .setMetadata(metadata)
+    .build()
+IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
+    if (error == null) {
+        // Handle successful verification
+    } else {
+        // Handle error
+    }
+}
+```
+
+With specific language:
+
+
+```kotlin
+val metadata = JSONObject()
+metadata.put("key1", "value1")
+val scenarioConfig = IdvStartWorkflowConfig.Builder()
+    .setLocale("de")
+    .build()
+IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
     if (error == null) {
         // Handle successful verification
     } else {
@@ -174,7 +195,29 @@ IdvSdk.instance().startWorkflow(this, metadata) { sessionResult, error ->
 
 ---
 
-## **7. Best Practices & Troubleshooting**
+## **7. Migration from 2.3 to 2.4**
+
+If you used metadata when you start workflow, from 2.4 version you should use `IdvStartWorkflowConfig` config.
+See example:
+
+```kotlin
+val metadata = JSONObject()
+metadata.put("key1", "value1")
+val scenarioConfig = IdvStartWorkflowConfig.Builder()
+    .setMetadata(metadata)
+    .build()
+IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
+    if (error == null) {
+        // Handle successful verification
+    } else {
+        // Handle error
+    }
+}
+```
+
+---
+
+## **8. Best Practices & Troubleshooting**
 
 - **Ensure all necessary dependencies** are included in `build.gradle.kts`.
 - **Handle API failures** by checking the `sessionResult` and `error` callbacks.
@@ -182,6 +225,7 @@ IdvSdk.instance().startWorkflow(this, metadata) { sessionResult, error ->
 - **Use proper credentials** when configuring `IdvConnectionConfig`.
 
 ---
+
 
 ## **Conclusion**
 

@@ -3,7 +3,7 @@ package com.regula.idv.sample
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -26,7 +25,6 @@ import com.regula.idv.api.config.IdvUrlConfig
 import com.regula.idv.docreader.DocReaderModule
 import com.regula.idv.face.FaceModule
 import com.regula.idv.sample.databinding.ActivityMainBinding
-import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -34,13 +32,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var detector: BarcodeScanner
 
-    private var fileUri: Uri? = null
-    private var filePath: String? = null
-
     companion object {
         private const val REQUEST_IMAGE_CAPTURE = 1
         private val TAG = MainActivity::class.simpleName
-        private const val FOLDER = "Pictures"
         private const val PERMISSION_REQUEST_CODE = 1
 
         private const val HOST = "..."
@@ -95,13 +89,6 @@ class MainActivity : AppCompatActivity() {
     private fun dispatchTakePictureIntent() {
         val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
 
-        val fileName = "img_${System.currentTimeMillis()}.jpg"
-        val file = File(getExternalFilesDir(FOLDER), fileName)
-        filePath = file.path
-
-        fileUri = FileProvider.getUriForFile(this, this.applicationContext.packageName + ".provider", file)
-
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileUri)
         startActivityForResult(cameraIntent, REQUEST_IMAGE_CAPTURE)
     }
 
@@ -128,14 +115,15 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            fileUri?.let {
-                detectQrCode(it)
+            val bitmap = data?.extras?.get("data") as Bitmap?
+            if (bitmap != null) {
+                detectQrCode(bitmap)
             }
         }
     }
 
-    private fun detectQrCode(uri: Uri) {
-        detector.process(InputImage.fromFilePath(applicationContext, uri))
+    private fun detectQrCode(bitmap: Bitmap) {
+        detector.process(InputImage.fromBitmap(bitmap, 0))
             .addOnCompleteListener { result ->
                 result.result.firstOrNull()?.let {
                     it.rawValue?.let { url ->
@@ -146,21 +134,23 @@ class MainActivity : AppCompatActivity() {
                     val rawValue = barcode.rawValue
                     Log.d(TAG, "Result: $rawValue")
                 }
-                deleteImage()
             }
             .addOnFailureListener {
                 Log.e(TAG, "Error: $it")
-                deleteImage()
             }
     }
 
     private fun connectByQr(url: String) {
+        binding.btnStart.isEnabled = false
         changeButtonsState(false)
         IdvSdk.instance().configure(this, IdvUrlConfig(url)) {
             it.onSuccess { workflows ->
                 Log.d(TAG, "Connected successfully")
+                binding.btnScanQr.isEnabled = true
                 if (workflows.isEmpty().not())
                     prepareWorkflow(workflows[0])
+                else
+                    changeButtonsState(true)
             }
             it.onFailure { error ->
                 changeButtonsState(true)
@@ -180,12 +170,6 @@ class MainActivity : AppCompatActivity() {
                 changeButtonsState(true)
                 Log.e(TAG, "Connect error: $error")
             }
-        }
-    }
-
-    private fun deleteImage() {
-        filePath?.let {
-            File(it).delete()
         }
     }
 
