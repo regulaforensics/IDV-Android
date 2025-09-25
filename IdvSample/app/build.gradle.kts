@@ -58,7 +58,7 @@ dependencies {
 
     //For using DocumentReaderSDK
     //DocumentReaderSDK Core
-    implementation("com.regula.documentreader.core:fullrfid:8.1.+@aar") {}
+    implementation("com.regula.documentreader.core:fullrfid:8.2.+@aar") {}
     //IDV DocumentReaderSDK
     implementation("com.regula.idv:docreader:3.1.+@aar") {
         isTransitive = true
@@ -70,7 +70,7 @@ dependencies {
 
     // For using FaceSDK
     //FaceSDK Core
-    implementation("com.regula.face.core:basic:7.1.+@aar") {}
+    implementation("com.regula.face.core:basic:7.2.+@aar") {}
     //IDV FaceSDK
     implementation("com.regula.idv:face:3.1.+@aar") {
         isTransitive = true
