@@ -18,10 +18,12 @@ import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.regula.idv.api.IdvSdk
-import com.regula.idv.api.config.IdvConnectionConfig
-import com.regula.idv.api.config.IdvInitConfig
-import com.regula.idv.api.config.IdvPrepareWorkflowConfig
-import com.regula.idv.api.config.IdvUrlConfig
+import com.regula.idv.api.config.ApiKeyConnectionConfig
+import com.regula.idv.api.config.CredentialsConnectionConfig
+import com.regula.idv.api.config.InitConfig
+import com.regula.idv.api.config.PrepareWorkflowConfig
+import com.regula.idv.api.config.StartWorkflowConfig
+import com.regula.idv.api.config.TokenConnectionConfig
 import com.regula.idv.docreader.DocReaderModule
 import com.regula.idv.face.FaceModule
 import com.regula.idv.sample.databinding.ActivityMainBinding
@@ -37,10 +39,9 @@ class MainActivity : AppCompatActivity() {
         private val TAG = MainActivity::class.simpleName
         private const val PERMISSION_REQUEST_CODE = 1
 
-        private const val HOST = "..."
+        private const val BASE_URL = "https://..."
         private const val USER_NAME = "..."
         private const val PASSWORD = "..."
-        private const val IS_SECURE = true
         private const val WORKFLOW_ID = "..."
     }
 
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
-        val config = IdvInitConfig(listOf(DocReaderModule(), FaceModule()))
+        val config = InitConfig(listOf(DocReaderModule(), FaceModule()))
         IdvSdk.instance().initialize(this, config) {
             it.onSuccess {
                 Log.d(TAG, "Initialized successfully")
@@ -84,6 +85,10 @@ class MainActivity : AppCompatActivity() {
 
     fun loginWithCredentials(view: View) {
         connectWithCredentials()
+    }
+
+    fun loginWithApiKey(view: View) {
+        configureByApiKey()
     }
 
     private fun dispatchTakePictureIntent() {
@@ -143,7 +148,8 @@ class MainActivity : AppCompatActivity() {
     private fun connectByQr(url: String) {
         binding.btnStart.isEnabled = false
         changeButtonsState(false)
-        IdvSdk.instance().configure(this, IdvUrlConfig(url)) {
+        val config = TokenConnectionConfig(url)
+        IdvSdk.instance().configure(this, config) {
             it.onSuccess { workflows ->
                 Log.d(TAG, "Connected successfully")
                 binding.btnScanQr.isEnabled = true
@@ -161,7 +167,24 @@ class MainActivity : AppCompatActivity() {
 
     private fun connectWithCredentials() {
         changeButtonsState(false)
-        IdvSdk.instance().configure(this, IdvConnectionConfig(HOST, USER_NAME, PASSWORD, IS_SECURE)) {
+        val config = CredentialsConnectionConfig(BASE_URL, USER_NAME, PASSWORD)
+        IdvSdk.instance().configure(this, config) {
+            it.onSuccess {
+                Log.d(TAG, "Connected successfully")
+                prepareWorkflow(WORKFLOW_ID)
+            }
+            it.onFailure { error ->
+                changeButtonsState(true)
+                Log.e(TAG, "Connect error: $error")
+            }
+        }
+    }
+
+    private fun configureByApiKey() {
+        changeButtonsState(false)
+        val apiKey = ""
+        val config = ApiKeyConnectionConfig(BASE_URL, apiKey)
+        IdvSdk.instance().configure(this, config) {
             it.onSuccess {
                 Log.d(TAG, "Connected successfully")
                 prepareWorkflow(WORKFLOW_ID)
@@ -174,7 +197,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun prepareWorkflow(workflowId: String) {
-        IdvSdk.instance().prepareWorkflow(this@MainActivity, IdvPrepareWorkflowConfig(workflowId)) {
+        IdvSdk.instance().prepareWorkflow(this@MainActivity, PrepareWorkflowConfig(workflowId)) {
             it.onSuccess {
                 binding.btnStart.isEnabled = true
                 binding.clProgress.visibility = View.GONE
@@ -188,13 +211,18 @@ class MainActivity : AppCompatActivity() {
 
     fun startWorkflow(view: View) {
         binding.btnStart.isEnabled = false
-        IdvSdk.instance().startWorkflow(this@MainActivity) { sessionResult, error ->
+
+        val config = StartWorkflowConfig.Builder()
+//            .setLocale("es") // set language here
+            .build()
+        IdvSdk.instance().startWorkflow(this@MainActivity, config) {
             binding.btnStart.isEnabled = true
-            if (error != null) {
-                Log.e(TAG, "Workflow completed with error: $error")
-                return@startWorkflow
+            it.onSuccess { workflowResult ->
+                Log.d(TAG, "Workflow completed successfully, transactionId: ${workflowResult.sessionId}")
             }
-            Log.d(TAG, "Workflow completed successfully, transactionId: ${sessionResult.transactionId}")
+            it.onFailure { error ->
+                Log.e(TAG, "Workflow completed with error: $error")
+            }
         }
     }
 
@@ -210,7 +238,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun changeButtonsState(enable: Boolean) {
-        binding.btnLogin.isEnabled = enable
+        binding.btnCredLogin.isEnabled = enable
+        binding.btnApiKeyLogin.isEnabled = enable
         binding.btnScanQr.isEnabled = enable
         if (enable)
             binding.clProgress.visibility = View.GONE

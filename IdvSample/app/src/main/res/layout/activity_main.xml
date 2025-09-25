@@ -7,32 +7,52 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/btnScanQr"
+    <LinearLayout
+        android:id="@+id/configureLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Configure by QR"
-        app:layout_constraintEnd_toStartOf="@+id/btnLogin"
-        app:layout_constraintHorizontal_weight="1"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="5dp"
-        android:onClick="openCamera"/>
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Configure by credentials"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toEndOf="@+id/btnScanQr"
-        android:layout_margin="5dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:onClick="loginWithCredentials"/>
-    
+        android:layout_marginTop="5dp">
+
+        <Button
+            android:id="@+id/btnScanQr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configure by QR"
+            android:layout_gravity="center_horizontal"
+            android:onClick="openCamera"/>
+
+        <Button
+            android:id="@+id/btnCredLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configure by credentials"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/btnScanQr"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="center_horizontal"
+            android:onClick="loginWithCredentials"/>
+
+        <Button
+            android:id="@+id/btnApiKeyLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Configure by Api Key"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@+id/btnScanQr"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_gravity="center_horizontal"
+            android:onClick="loginWithApiKey"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/btnStart"
         android:layout_width="wrap_content"
@@ -41,7 +61,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="5dp"
-        app:layout_constraintTop_toBottomOf="@id/btnLogin"
+        app:layout_constraintTop_toBottomOf="@id/configureLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:enabled="false"
         android:onClick="startWorkflow"/>
 

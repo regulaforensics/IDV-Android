@@ -24,6 +24,8 @@ Before integrating the SDK, ensure the following:
    maven {
    url = uri("https://maven.regulaforensics.com/RegulaDocumentReader")
    }
+
+   // only for Beta versions
    maven {
    url = uri("https://maven.regulaforensics.com/RegulaDocumentReader/Beta")
    }
@@ -50,15 +52,20 @@ and add `kotlin-kapt` plugin:
 4. In your **app-level** `build.gradle.kts`, add the following dependency:
 
 ```kotlin
-implementation("com.regula.documentreader.core:fullrfid:7.6+@aar") {}
-implementation("com.regula.idv:docreader:1.0.29@aar") {
+// Required only if you're going to use DocReader SDK in your workflows
+implementation("com.regula.documentreader.core:fullrfid:8.2+@aar") {}
+implementation("com.regula.idv:docreader:3.1.+@aar") {
         isTransitive = true
     }
-implementation("com.regula.face.core:basic:6.4+@aar") {}
-implementation("com.regula.idv:face:1.0.27@aar") {
+
+// Required only if you're going to use Face SDK in your workflows
+implementation("com.regula.face.core:basic:7.1+@aar") {}
+implementation("com.regula.idv:face:3.1.+@aar") {
         isTransitive = true
     }
-implementation("com.regula.idv:api:1.0.17@aar") {
+
+// main dependency
+implementation("com.regula.idv:api:3.1.+@aar") {
         isTransitive = true
     }
 ```
@@ -79,7 +86,11 @@ Ensure the following permissions and features are included:
             android:required="true" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Required only if you're going to scan documents using Camera  -->
     <uses-permission android:name="android.permission.CAMERA"/>
+
+    <!-- Required only if you're going to read Rfid chip  -->
     <uses-permission android:name="android.permission.NFC" />
 
 </manifest>
@@ -95,13 +106,13 @@ In your `MainActivity.kt`, initialize the SDK with the **Document Reader Module*
 import com.regula.idv.api.IdvSdk
 import com.regula.idv.docreader.DocReaderModule
 import com.regula.idv.face.FaceModule
-import com.regula.idv.api.config.IdvInitConfig
+import com.regula.idv.api.config.InitConfig
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val config = IdvInitConfig(listOf(DocReaderModule(), FaceModule()))
-        IdvSdk.instance().initialize(this, config) {
+        val config = InitConfig(listOf(DocReaderModule(), FaceModule()))   // you can use both DocReader and Face module or only one when it's not required by workflow
+        IdvSdk.instance().initialize(context, config) {
             // Handle initialization result
         }
     }
@@ -112,90 +123,148 @@ class MainActivity : AppCompatActivity() {
 
 ## **5. Configure API Settings**
 
-Before using the SDK, configure the API connection:
+Before using the SDK, configure the API connection. There are 3 ways to configure the API connection:
+
+<details><summary>Using credentials</summary>
 
 ```kotlin
-import com.regula.idv.api.config.IdvUrlConfig
-import com.regula.idv.api.config.IdvConnectionConfig
+import com.regula.idv.api.config.CredentialsConnectionConfig
 
-val HOST = "your_host"
+val URL = "https://..."
 val USER_NAME = "your_username"
 val PASSWORD = "your_password"
-val IS_SECURE = true
 
-IdvSdk.instance().configure(this, IdvConnectionConfig(HOST, USER_NAME, PASSWORD, IS_SECURE)) {}
+IdvSdk.instance().configure(context, CredentialsConnectionConfig(URL, USER_NAME, PASSWORD, IS_SECURE)) {
+    it.onSuccess {
+        // handle success
+    }
+    it.onFailure { exception ->
+        // handle errors
+    }
+}
 ```
+
+</details>
+
+<details><summary>Using token</summary>
+
+Use this way when you have url with already defined auth key. In the result you will get a list of workflows id that you can perform.
+
+```kotlin
+import com.regula.idv.api.config.TokenConnectionConfig
+
+val URL = "https://.../mobile?authorization=Token%20tr-pn7u6f5wizj9l7fnx4nzu8pqrnlwr&sessionId=68a72388660070d96275a8c2"
+
+IdvSdk.instance().configure(context, TokenConnectionConfig(URL)) {
+    it.onSuccess { workflows ->
+        // handle success
+    }
+    it.onFailure { exception ->
+        // handle errors
+    }
+}
+```
+
+</details>
+
+<details><summary>Using Api Key</summary>
+
+```kotlin
+import com.regula.idv.api.config.ApiKeyConnectionConfig
+
+val URL = "https://..."
+val API_KEY = "yprpwttipracqerersuzzrs_fbptvhtoczfjbx9azn8w3lzioddacyw3slfvoq3"
+
+IdvSdk.instance().configure(context, ApiKeyConnectionConfig(URL, API_KEY)) {
+    it.onSuccess {
+        // handle success
+    }
+    it.onFailure { exception ->
+        // handle errors
+    }
+}
+```
+
+</details>
 
 ---
 
 ## **6. Prepare and Start an ID Verification Workflow**
 
-Prepare a workflow before starting the verification:
-
-`your_workflow_id` is dependent on wheter the disability check is on or off.
-
-If disablity check in ON, the value of `your_workflow_id` will be "WorkflowXXX", otherwise, it will be "WorkflowYYY".
-
-**We will confirm the workflow ids before we start integration.**
+#### Prepare a workflow before starting the verification:
 
 ```kotlin
-import com.regula.idv.api.config.IdvPrepareWorkflowConfig
+import com.regula.idv.api.config.PrepareWorkflowConfig
 
 val workflowId = "your_workflow_id"
-IdvSdk.instance().prepareWorkflow(this, IdvPrepareWorkflowConfig(workflowId)) {}
-```
-
-Start the workflow when ready:
-
-```kotlin
-IdvSdk.instance().startWorkflow(this) { sessionResult, error ->
-    if (error == null) {
-        // Handle successful verification
-    } else {
-        // Handle error
+IdvSdk.instance().prepareWorkflow(context, PrepareWorkflowConfig(workflowId)) {
+    it.onSuccess {
+        // handle success
+    }
+    it.onFailure { exception ->
+        // handle errors
     }
 }
 ```
 
-With metadata:
+#### Start the workflow with default parameters when ready:
+
+```kotlin
+IdvSdk.instance().startWorkflow(context) {
+    it.onSuccess { workflowResult ->
+        Log.d("IDV", "sessionId: ${workflowResult.sessionId}")
+    }
+    it.onFailure { exception -> 
+        // handle errors
+    }
+}
+```
+
+#### Set up metadata before start workflow:
 
 
 ```kotlin
+import com.regula.idv.api.config.StartWorkflowConfig
+
 val metadata = JSONObject()
 metadata.put("key1", "value1")
-val scenarioConfig = IdvStartWorkflowConfig.Builder()
+val config = StartWorkflowConfig.Builder()
     .setMetadata(metadata)
     .build()
-IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
-    if (error == null) {
-        // Handle successful verification
-    } else {
-        // Handle error
+IdvSdk.instance().startWorkflow(context, config) {
+    it.onSuccess { workflowResult ->
+        Log.d("IDV", "sessionId: ${workflowResult.sessionId}")
+    }
+    it.onFailure { exception -> 
+        // handle errors
     }
 }
 ```
 
-With specific language:
+#### With specific language:
 
 
 ```kotlin
-val metadata = JSONObject()
-metadata.put("key1", "value1")
-val scenarioConfig = IdvStartWorkflowConfig.Builder()
+import com.regula.idv.api.config.StartWorkflowConfig
+
+val config = StartWorkflowConfig.Builder()
     .setLocale("de")
     .build()
-IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
-    if (error == null) {
-        // Handle successful verification
-    } else {
-        // Handle error
+IdvSdk.instance().startWorkflow(context, config) {
+    it.onSuccess { workflowResult ->
+        Log.d("IDV", "sessionId: ${workflowResult.sessionId}")
+    }
+    it.onFailure { exception -> 
+        // handle errors
     }
 }
 ```
 
 ---
 
-## **7. Migration from 2.3 to 2.4**
+## **7 Migration**
+
+### **7.1 Migration from 2.3 to 2.4/2.5**
 
 If you used metadata when you start workflow, from 2.4 version you should use `IdvStartWorkflowConfig` config.
 See example:
@@ -215,14 +284,23 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 }
 ```
 
+
+### **7.2 Migration from 2.4/2.5 to 3.1**
+
+- `IdvInitConfig` renamed to `InitConfig`.
+- `IdvConnectionConfig` renamed to `CredentialsConnectionConfig`. Also, now the first parameter is full url that includes http schema (http or https). You don't need to put IS_SECURE parameter anymore.
+- `IdvPrepareWorkflowConfig` renamed to `PrepareWorkflowConfig`.
+- `IdvStartWorkflowConfig` renamed to `StartWorkflowConfig`.
+- changed completion in `startWorkflow` method. Now it returns `Result<WorkflowResult>` object.
+
 ---
 
 ## **8. Best Practices & Troubleshooting**
 
 - **Ensure all necessary dependencies** are included in `build.gradle.kts`.
-- **Handle API failures** by checking the `sessionResult` and `error` callbacks.
+- **Handle API failures** by checking the `workflowResult` and `exception` callbacks.
 - **Grant camera permissions** before starting the workflow.
-- **Use proper credentials** when configuring `IdvConnectionConfig`.
+- **Use proper configuration** when establish connection to the platform.
 
 ---
 

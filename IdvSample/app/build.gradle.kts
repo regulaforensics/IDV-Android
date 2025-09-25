@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.regula.idv.sample"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.regula.idv.sample"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -60,11 +60,11 @@ dependencies {
     //DocumentReaderSDK Core
     implementation("com.regula.documentreader.core:fullrfid:8.1.+@aar") {}
     //IDV DocumentReaderSDK
-    implementation("com.regula.idv:docreader:2.5.+@aar") {
+    implementation("com.regula.idv:docreader:3.1.+@aar") {
         isTransitive = true
     }
     //IDV API
-    implementation("com.regula.idv:api:2.5.+@aar") {
+    implementation("com.regula.idv:api:3.1.+@aar") {
         isTransitive = true
     }
 
@@ -72,7 +72,7 @@ dependencies {
     //FaceSDK Core
     implementation("com.regula.face.core:basic:7.1.+@aar") {}
     //IDV FaceSDK
-    implementation("com.regula.idv:face:2.5.+@aar") {
+    implementation("com.regula.idv:face:3.1.+@aar") {
         isTransitive = true
     }
 
