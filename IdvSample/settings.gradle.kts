@@ -19,6 +19,9 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.regulaforensics.com/RegulaDocumentReader")
         }
+        maven {
+            url = uri("https://raw.githubusercontent.com/iProov/android/master/maven/")
+        }
     }
 }
 

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.regula.idv.sample"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -73,6 +73,11 @@ dependencies {
     implementation("com.regula.face.core:basic:7.2.+@aar") {}
     //IDV FaceSDK
     implementation("com.regula.idv:face:3.1.+@aar") {
+        isTransitive = true
+    }
+
+    // IProov module
+    implementation("com.regula.idv.external:iproov:3.1.4@aar") {
         isTransitive = true
     }
 

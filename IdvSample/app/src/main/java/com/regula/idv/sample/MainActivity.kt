@@ -25,6 +25,7 @@ import com.regula.idv.api.config.PrepareWorkflowConfig
 import com.regula.idv.api.config.StartWorkflowConfig
 import com.regula.idv.api.config.TokenConnectionConfig
 import com.regula.idv.docreader.DocReaderModule
+import com.regula.idv.external.iproov.IProovModule
 import com.regula.idv.face.FaceModule
 import com.regula.idv.sample.databinding.ActivityMainBinding
 
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
-        val config = InitConfig(listOf(DocReaderModule(), FaceModule()))
+        val config = InitConfig(listOf(DocReaderModule(), FaceModule(), IProovModule()))
         IdvSdk.instance().initialize(this, config) {
             it.onSuccess {
                 Log.d(TAG, "Initialized successfully")
