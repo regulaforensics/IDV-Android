@@ -10,7 +10,7 @@ This guide provides step-by-step instructions on integrating the **IDV SDK** int
 
 Before integrating the SDK, ensure the following:
 
-- Android Target SDK **34** recommended
+- Android Target SDK **36** recommended
 - **Camera permission** enabled
 - **NFC permission** enabled
 - **Internet permission** enabled
@@ -53,24 +53,40 @@ and add `kotlin-kapt` plugin:
 
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
-implementation("com.regula.documentreader.core:fullrfid:8.2+@aar") {}
-implementation("com.regula.idv:docreader:3.1.+@aar") {
+implementation("com.regula.documentreader.core:fullrfid:9.1+@aar") {}
+implementation("com.regula.idv:docreader:3.2.+@aar") {
         isTransitive = true
     }
 
 // Required only if you're going to use Face SDK in your workflows
-implementation("com.regula.face.core:basic:7.1+@aar") {}
-implementation("com.regula.idv:face:3.1.+@aar") {
+implementation("com.regula.face.core:basic:7.2+@aar") {}
+implementation("com.regula.idv:face:3.2.+@aar") {
         isTransitive = true
     }
 
 // main dependency
-implementation("com.regula.idv:api:3.1.+@aar") {
+implementation("com.regula.idv:api:3.2.+@aar") {
         isTransitive = true
     }
 ```
 
 Sync Gradle after adding the dependencies.
+
+5. Using different version of Document Reader API SDK or Face API SDK
+
+```kotlin
+// By default, DocumentReader API included into docreader module of IDV.
+// But you can change it to different version if you want use the latest version.
+implementation("com.regula.documentreader:api:9.1.+@aar") {
+        isTransitive = true
+    }
+
+// By default, Face API included into face module of IDV.
+// But you can change it to different version if you want use the latest version.
+implementation("com.regula.face:api:7.2.+@aar") {
+        isTransitive = true
+    }
+```
 
 ---
 
@@ -92,6 +108,10 @@ Ensure the following permissions and features are included:
 
     <!-- Required only if you're going to read Rfid chip  -->
     <uses-permission android:name="android.permission.NFC" />
+
+    <!-- Required only if you're going to request user's location in a workflow  -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>
 ```
@@ -292,6 +312,9 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 - `IdvPrepareWorkflowConfig` renamed to `PrepareWorkflowConfig`.
 - `IdvStartWorkflowConfig` renamed to `StartWorkflowConfig`.
 - changed completion in `startWorkflow` method. Now it returns `Result<WorkflowResult>` object.
+
+### **7.3 Migration from 3.1 to 3.2**
+- no updates require
 
 ---
 

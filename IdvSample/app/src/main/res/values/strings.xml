@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">IdvSample</string>
+    <string name="configuring_sdk">Configuring SDK …</string>
+    <string name="loading_workflows">Loading workflows …</string>
+    <string name="preparing_workflow">Preparing workflow …</string>
+    <string name="configure_by_url">Configure by Url</string>
+    <string name="configure_by_qr">Configure by QR</string>
+    <string name="configure_by_credentials">Configure by Credentials</string>
+    <string name="configure_by_api_key">Configure by Api Key</string>
+    <string name="start_workflow">Start Workflow</string>
+    <string name="camera_permission_denied">Camera permission denied</string>
+    <string name="no_qr_code_detected">No QR code detected</string>
+    <string name="enter_url">Enter URL</string>
+    <string name="submit">Submit</string>
+    <string name="error">Error</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="copy">Copy</string>
+    <string name="copied_to_clipboard">Copied to clipboard</string>
 </resources>
