@@ -64,23 +64,23 @@ dependencies {
     }
 
     //IDV DocumentReaderSDK
-    implementation("com.regula.idv:docreader:3.3.+@aar") {
+    implementation("com.regula.idv:docreader:3.4.+@aar") {
         isTransitive = true
     }
 
     //IDV API
-    implementation("com.regula.idv:api:3.3.+@aar") {
+    implementation("com.regula.idv:api:3.4.+@aar") {
         isTransitive = true
     }
 
     // For using FaceSDK
     //FaceSDK Core
-    implementation("com.regula.face.core:basic:7.2.+@aar") {}
-    implementation("com.regula.face:api:7.2.+@aar") {
+    implementation("com.regula.face.core:basic:8.1.+@aar") {}
+    implementation("com.regula.face:api:8.1.+@aar") {
         isTransitive = true
     }
     //IDV FaceSDK
-    implementation("com.regula.idv:face:3.3.+@aar") {
+    implementation("com.regula.idv:face:3.4.+@aar") {
         isTransitive = true
     }
 

@@ -54,18 +54,18 @@ and add `kotlin-kapt` plugin:
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
 implementation("com.regula.documentreader.core:fullrfid:9.2+@aar") {}
-implementation("com.regula.idv:docreader:3.3.+@aar") {
+implementation("com.regula.idv:docreader:3.4.+@aar") {
         isTransitive = true
     }
 
 // Required only if you're going to use Face SDK in your workflows
 implementation("com.regula.face.core:basic:7.2+@aar") {}
-implementation("com.regula.idv:face:3.3.+@aar") {
+implementation("com.regula.idv:face:3.4.+@aar") {
         isTransitive = true
     }
 
 // main dependency
-implementation("com.regula.idv:api:3.3.+@aar") {
+implementation("com.regula.idv:api:3.4.+@aar") {
         isTransitive = true
     }
 ```
@@ -83,7 +83,7 @@ implementation("com.regula.documentreader:api:9.2.+@aar") {
 
 // By default, Face API included into face module of IDV.
 // But you can change it to different version if you want use the latest version.
-implementation("com.regula.face:api:7.2.+@aar") {
+implementation("com.regula.face:api:8.1.+@aar") {
         isTransitive = true
     }
 ```
@@ -316,7 +316,10 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 ### **7.3 Migration from 3.1 to 3.2**
 - no updates require
 
-### **7.3 Migration from 3.2 to 3.3**
+### **7.4 Migration from 3.2 to 3.3**
+- no updates require
+
+### **7.5 Migration from 3.3 to 3.4**
 - no updates require
 
 ---
