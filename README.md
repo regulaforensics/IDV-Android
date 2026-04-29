@@ -53,19 +53,19 @@ and add `kotlin-kapt` plugin:
 
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
-implementation("com.regula.documentreader.core:fullrfid:9.2+@aar") {}
-implementation("com.regula.idv:docreader:3.4.+@aar") {
+implementation("com.regula.documentreader.core:fullrfid:9.3+@aar") {}
+implementation("com.regula.idv:docreader:3.6.+@aar") {
         isTransitive = true
     }
 
 // Required only if you're going to use Face SDK in your workflows
-implementation("com.regula.face.core:basic:7.2+@aar") {}
-implementation("com.regula.idv:face:3.4.+@aar") {
+implementation("com.regula.face.core:basic:8.2+@aar") {}
+implementation("com.regula.idv:face:3.6.+@aar") {
         isTransitive = true
     }
 
 // main dependency
-implementation("com.regula.idv:api:3.4.+@aar") {
+implementation("com.regula.idv:api:3.6.+@aar") {
         isTransitive = true
     }
 ```
@@ -77,13 +77,13 @@ Sync Gradle after adding the dependencies.
 ```kotlin
 // By default, DocumentReader API included into docreader module of IDV.
 // But you can change it to different version if you want use the latest version.
-implementation("com.regula.documentreader:api:9.2.+@aar") {
+implementation("com.regula.documentreader:api:9.3.+@aar") {
         isTransitive = true
     }
 
 // By default, Face API included into face module of IDV.
 // But you can change it to different version if you want use the latest version.
-implementation("com.regula.face:api:8.1.+@aar") {
+implementation("com.regula.face:api:8.2.+@aar") {
         isTransitive = true
     }
 ```
@@ -320,6 +320,9 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 - no updates require
 
 ### **7.5 Migration from 3.3 to 3.4**
+- no updates require
+
+### **7.6 Migration from 3.4 to 3.6**
 - no updates require
 
 ---
