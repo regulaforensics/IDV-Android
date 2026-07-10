@@ -1,4 +1,4 @@
-package com.regula.idv.sample.error
+package com.regula.idv.sample.dialogs
 
 import android.graphics.Color
 import android.os.Bundle

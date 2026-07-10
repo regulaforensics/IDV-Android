@@ -20,7 +20,8 @@ import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 import com.regula.idv.sample.R
 import com.regula.idv.sample.databinding.ActivityMainBinding
-import com.regula.idv.sample.error.showErrorDialog
+import com.regula.idv.sample.dialogs.showErrorDialog
+import com.regula.idv.sample.dialogs.showInfoDialog
 import com.regula.idv.sample.main.adapter.UiWorkflowsAdapter
 import com.regula.idv.sample.url.UrlInputActivity
 import com.regula.idv.sample.utils.handleWindowInsets
@@ -93,6 +94,9 @@ class MainActivity : AppCompatActivity() {
         binding.btnStartWorkflow.setOnClickListener {
             viewModel.startWorkflow()
         }
+        binding.btnIamLogin.setOnClickListener {
+            viewModel.startIamLogin()
+        }
     }
 
     private fun setupObservers() {
@@ -127,6 +131,12 @@ class MainActivity : AppCompatActivity() {
             .errorEvent
             .observe(this) { error ->
                 showErrorDialog(error.toString())
+            }
+
+        viewModel
+            .infoEvent
+            .observe(this) { info ->
+                showInfoDialog(info)
             }
 
         viewModel

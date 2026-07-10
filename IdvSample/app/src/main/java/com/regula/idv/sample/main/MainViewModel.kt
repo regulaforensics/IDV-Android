@@ -11,6 +11,7 @@ import com.regula.idv.api.IdvSdk
 import com.regula.idv.api.config.ApiKeyConnectionConfig
 import com.regula.idv.api.config.CredentialsConnectionConfig
 import com.regula.idv.api.config.InitConfig
+import com.regula.idv.api.config.LoginConfig
 import com.regula.idv.api.config.PrepareWorkflowConfig
 import com.regula.idv.api.config.StartWorkflowConfig
 import com.regula.idv.api.config.TokenConnectionConfig
@@ -18,6 +19,7 @@ import com.regula.idv.api.listeners.IdvSdkListener
 import com.regula.idv.api.models.Workflow
 import com.regula.idv.docreader.DocReaderModule
 import com.regula.idv.face.FaceModule
+import com.regula.idv.module.enums.IdvLogLevel
 import com.regula.idv.sample.App
 import com.regula.idv.sample.R
 import com.regula.idv.sample.main.adapter.UiWorkflow
@@ -58,9 +60,13 @@ class MainViewModel(
     val progressMessage: LiveData<LocalizedString?>
         get() = _progressMessage
 
-    private val _errorEvent = SingleLiveEvent<Throwable>()
-    val errorEvent: LiveData<Throwable>
+    private val _errorEvent = SingleLiveEvent<String>()
+    val errorEvent: LiveData<String>
         get() = _errorEvent
+
+    private val _infoEvent = SingleLiveEvent<String>()
+    val infoEvent: LiveData<String>
+        get() = _infoEvent
 
     private val _workflows = MutableLiveData<List<UiWorkflow>>(emptyList())
     val workflows: LiveData<List<UiWorkflow>>
@@ -76,6 +82,8 @@ class MainViewModel(
             (selectedWorkflow != null)
         }
 
+
+
     private val idvSdkListener: IdvSdkListener =
         object : IdvSdkListener {
             override fun didStartSession() {
@@ -89,6 +97,15 @@ class MainViewModel(
             }
             override fun didContinueRemoteSession() {
                 Log.d(TAG, "didContinueRemoteSession: ${idvSdk.currentSessionId()}")
+            }
+
+            override fun didReceiveLogEvent(level: IdvLogLevel, message: String) {
+                when (level) {
+                    IdvLogLevel.DEBUG -> Log.d(TAG, message)
+                    IdvLogLevel.INFO -> Log.i(TAG, message)
+                    IdvLogLevel.WARNING -> Log.w(TAG, message)
+                    IdvLogLevel.ERROR -> Log.e(TAG, message)
+                }
             }
         }
 
@@ -120,7 +137,7 @@ class MainViewModel(
         showProgress(R.string.configuring_sdk)
 
         val config = CredentialsConnectionConfig(BASE_URL, USER_NAME, PASSWORD)
-        idvSdk.configure(appContext, config) { result ->
+        idvSdk.configure(config) { result ->
             result
                 .onSuccess {
                     Log.d(TAG, "configureByCredentials success")
@@ -141,7 +158,7 @@ class MainViewModel(
         showProgress(R.string.configuring_sdk)
 
         val config = ApiKeyConnectionConfig(BASE_URL, API_KEY)
-        idvSdk.configure(appContext, config) { result ->
+        idvSdk.configure(config) { result ->
             result
                 .onSuccess {
                     Log.d(TAG, "configureByApiKey success")
@@ -163,7 +180,7 @@ class MainViewModel(
         showProgress(R.string.configuring_sdk)
 
         val config = TokenConnectionConfig(url)
-        idvSdk.configure(appContext, config) { result ->
+        idvSdk.configure(config) { result ->
             result
                 .onSuccess { workflowIds ->
                     Log.d(TAG, "configureByUrl success")
@@ -217,7 +234,7 @@ class MainViewModel(
         selectWorkflow("")
 
         val config = PrepareWorkflowConfig(workflowId)
-        idvSdk.prepareWorkflow(appContext, config) { result ->
+        idvSdk.prepareWorkflow(config) { result ->
             result
                 .onSuccess {
                     Log.d(TAG, "prepareWorkflow success")
@@ -239,10 +256,11 @@ class MainViewModel(
         idvSdk.startWorkflow(appContext, config) { result ->
             result
                 .onSuccess { workflowResult ->
-                    Log.d(TAG, "Workflow completed successfully, transactionId: ${workflowResult.sessionId}")
+                    val desc = "Workflow completed successfully, transactionId: ${workflowResult.sessionId}"
+                    Log.d(TAG, desc)
                 }
                 .onFailure { error ->
-                    Log.e(TAG, "Workflow completed with error: $error")
+                    _errorEvent.value = "Workflow completed with error: ${error.toString()}"
                 }
         }
     }
@@ -278,7 +296,7 @@ class MainViewModel(
     }
 
     private fun showError(error: Throwable) {
-        _errorEvent.value = error
+        _errorEvent.value = error.toString()
     }
 
     private fun showWorkflows(workflows: List<Workflow>) {
@@ -293,6 +311,28 @@ class MainViewModel(
 
     private fun clearWorkflows() {
         _workflows.value = emptyList()
+    }
+
+    fun startIamLogin() {
+        showProgress(R.string.iam_login_processing)
+
+        val config = LoginConfig.Builder()
+            .setBaseUrl("https://...") // set your host
+            .setApplicationId("...") // set application id
+            .build()
+
+        idvSdk.startLogin(config) { result ->
+            hideProgress()
+            result
+                .onSuccess {
+                    val desc = "Login completed successfully, result: $it"
+                    Log.d(TAG, desc)
+                    _infoEvent.value = desc
+                }
+                .onFailure {
+                    _errorEvent.value = "Login completed with error: ${it.toString()}"
+                }
+        }
     }
 }
 

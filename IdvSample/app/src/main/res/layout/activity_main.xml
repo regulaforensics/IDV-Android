@@ -55,6 +55,13 @@
                 android:text="@string/configure_by_api_key"
                 />
 
+            <Button
+                android:id="@+id/btnIamLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/iam_login"
+                />
+
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
