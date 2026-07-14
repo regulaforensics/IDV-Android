@@ -54,7 +54,7 @@ and add `kotlin-kapt` plugin:
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
 implementation("com.regula.documentreader.core:fullrfid:9.6+@aar") {}
-implementation("com.regula.idv:docreader:3.6.+@aar") {
+implementation("com.regula.idv:docreader:3.8.+@aar") {
         isTransitive = true
     }
 
