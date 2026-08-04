@@ -53,19 +53,19 @@ and add `kotlin-kapt` plugin:
 
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
-implementation("com.regula.documentreader.core:fullrfid:9.6+@aar") {}
-implementation("com.regula.idv:docreader:3.8.+@aar") {
+implementation("com.regula.documentreader.core:fullrfid:9.7+@aar") {}
+implementation("com.regula.idv:docreader:3.9.+@aar") {
         isTransitive = true
     }
 
 // Required only if you're going to use Face SDK in your workflows
-implementation("com.regula.face.core:basic:8.2+@aar") {}
+implementation("com.regula.face.core:basic:8.3+@aar") {}
 implementation("com.regula.idv:face:3.8.+@aar") {
         isTransitive = true
     }
 
 // main dependency
-implementation("com.regula.idv:api:3.8.+@aar") {
+implementation("com.regula.idv:api:3.9.+@aar") {
         isTransitive = true
     }
 ```
@@ -77,16 +77,39 @@ Sync Gradle after adding the dependencies.
 ```kotlin
 // By default, DocumentReader API included into docreader module of IDV.
 // But you can change it to different version if you want use the latest version.
-implementation("com.regula.documentreader:api:9.6.+@aar") {
+implementation("com.regula.documentreader:api:9.7.+@aar") {
         isTransitive = true
     }
 
 // By default, Face API included into face module of IDV.
 // But you can change it to different version if you want use the latest version.
-implementation("com.regula.face:api:8.2.+@aar") {
+implementation("com.regula.face:api:8.3.+@aar") {
         isTransitive = true
     }
 ```
+
+6. when you're planning to read MDL, you need to add BT Device library
+```kotlin
+implementation("com.regula.btdevice:api:9.1.+@aar")
+```
+
+Ensure the following permissions and features are included:
+
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        tools:remove="android:maxSdkVersion" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:remove="android:maxSdkVersion" />
+
+</manifest>
+```
+
+use 'tools:remove="android:maxSdkVersion' when you're using workflow with location detection.
 
 ---
 
@@ -109,9 +132,13 @@ Ensure the following permissions and features are included:
     <!-- Required only if you're going to read Rfid chip  -->
     <uses-permission android:name="android.permission.NFC" />
 
-    <!-- Required only if you're going to request user's location in a workflow  -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!-- Required only if you're going to request user's location in a workflow or read mDL  -->
+    <uses-permission
+        android:name="android.permission.ACCESS_COARSE_LOCATION"
+        tools:remove="android:maxSdkVersion" />
+    <uses-permission
+        android:name="android.permission.ACCESS_FINE_LOCATION"
+        tools:remove="android:maxSdkVersion" />
 
 </manifest>
 ```
@@ -326,6 +353,9 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 - no updates require
 
 ### **7.7 Migration from 3.6 to 3.8**
+- no updates require
+
+### **7.8 Migration from 3.8 to 3.9**
 - no updates require
 
 ---
