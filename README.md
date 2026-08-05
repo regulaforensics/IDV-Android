@@ -60,7 +60,7 @@ implementation("com.regula.idv:docreader:3.9.+@aar") {
 
 // Required only if you're going to use Face SDK in your workflows
 implementation("com.regula.face.core:basic:8.3+@aar") {}
-implementation("com.regula.idv:face:3.8.+@aar") {
+implementation("com.regula.idv:face:3.9.+@aar") {
         isTransitive = true
     }
 

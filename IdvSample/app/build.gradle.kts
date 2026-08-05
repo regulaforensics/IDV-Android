@@ -80,7 +80,7 @@ dependencies {
         isTransitive = true
     }
     //IDV FaceSDK
-    implementation("com.regula.idv:face:3.8.+@aar") {
+    implementation("com.regula.idv:face:3.9.+@aar") {
         isTransitive = true
     }
 
