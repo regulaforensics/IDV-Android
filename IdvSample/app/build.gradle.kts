@@ -1,17 +1,16 @@
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
-    id("kotlin-kapt")   // require to add
+    alias(libs.plugins.legacyKapt)   // require to add
 }
 
 android {
     namespace = "com.regula.idv.sample"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.regula.idv.sample"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -36,9 +35,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 dependencies {
@@ -58,32 +54,32 @@ dependencies {
 
     //For using DocumentReaderSDK
     //DocumentReaderSDK Core
-    implementation("com.regula.documentreader.core:fullrfid:9.7.+@aar") {}
-    implementation("com.regula.documentreader:api:9.7.+@aar") {
+    implementation("com.regula.documentreader.core:fullrfid:9.9.+@aar") {}
+    implementation("com.regula.documentreader:api:9.9.+@aar") {
         isTransitive = true
     }
 
     //IDV DocumentReaderSDK
-    implementation("com.regula.idv:docreader:3.9.+@aar") {
+    implementation("com.regula.idv:docreader:3.10.+@aar") {
         isTransitive = true
     }
 
     //IDV API
-    implementation("com.regula.idv:api:3.9.+@aar") {
+    implementation("com.regula.idv:api:3.10.+@aar") {
         isTransitive = true
     }
 
     // For using FaceSDK
     //FaceSDK Core
-    implementation("com.regula.face.core:basic:8.3.+@aar") {}
-    implementation("com.regula.face:api:8.3.+@aar") {
+    implementation("com.regula.face.core:basic:8.4.+@aar") {}
+    implementation("com.regula.face:api:8.4.+@aar") {
         isTransitive = true
     }
     //IDV FaceSDK
-    implementation("com.regula.idv:face:3.9.+@aar") {
+    implementation("com.regula.idv:face:3.10.+@aar") {
         isTransitive = true
     }
 
     // only for MDL
-    implementation("com.regula.btdevice:api:9.1.+@aar")
+    implementation("com.regula.btdevice:api:9.9.+@aar")
 }

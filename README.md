@@ -10,29 +10,32 @@ This guide provides step-by-step instructions on integrating the **IDV SDK** int
 
 Before integrating the SDK, ensure the following:
 
-- Android Target SDK **36** recommended
-- **Camera permission** enabled
-- **NFC permission** enabled
-- **Internet permission** enabled
-- Regula IDV SDK dependency added to `build.gradle.kts`
+- Android target SDK **36** is recommended
+- **Camera** permission is enabled
+- **NFC** permission is enabled
+- **Internet** permission is enabled
+- The Regula IDV SDK dependency is added to `build.gradle.kts`
 
 ---
 
 ## **2. Add Regula SDK to Gradle**
 
-1. Add url to Regula's maven repository in you `build.gradle.kts` file
-   maven {
-   url = uri("https://maven.regulaforensics.com/RegulaDocumentReader")
-   }
+1. Add the URL of Regula's Maven repository to your `build.gradle.kts` file:
 
-   // only for Beta versions
-   maven {
-   url = uri("https://maven.regulaforensics.com/RegulaDocumentReader/Beta")
-   }
+```kotlin
+maven {
+    url = uri("https://maven.regulaforensics.com/RegulaDocumentReader")
+}
 
-2. Copy **regula.license** and **db.dat** files to `app/src/main/assets/Regula` folder.
+// Only for beta versions
+maven {
+    url = uri("https://maven.regulaforensics.com/RegulaDocumentReader/Beta")
+}
+```
 
-3. Enable view and data bingings features in your **app-level** `build.gradle.kts` by adding to `android` section:
+2. Copy the **regula.license** and **db.dat** files to the `app/src/main/assets/Regula` folder.
+
+3. Enable view binding and data binding in your **app-level** `build.gradle.kts` by adding the following to the `android` section:
 
 ```kotlin
     buildFeatures {
@@ -41,7 +44,7 @@ Before integrating the SDK, ensure the following:
     }
 ```
 
-and add `kotlin-kapt` plugin:
+Also add the `kotlin-kapt` plugin:
 
 ```kotlin
     plugins {
@@ -49,51 +52,57 @@ and add `kotlin-kapt` plugin:
     }
 ```
 
-4. In your **app-level** `build.gradle.kts`, add the following dependency:
+4. In your **app-level** `build.gradle.kts`, add the following dependencies:
 
 ```kotlin
 // Required only if you're going to use DocReader SDK in your workflows
-implementation("com.regula.documentreader.core:fullrfid:9.7+@aar") {}
-implementation("com.regula.idv:docreader:3.9.+@aar") {
+implementation("com.regula.documentreader.core:fullrfid:9.9+@aar") {}
+implementation("com.regula.idv:docreader:3.10.+@aar") {
         isTransitive = true
     }
 
 // Required only if you're going to use Face SDK in your workflows
 implementation("com.regula.face.core:basic:8.3+@aar") {}
-implementation("com.regula.idv:face:3.9.+@aar") {
+implementation("com.regula.idv:face:3.10.+@aar") {
         isTransitive = true
     }
 
-// main dependency
-implementation("com.regula.idv:api:3.9.+@aar") {
+// Main dependency
+implementation("com.regula.idv:api:3.10.+@aar") {
         isTransitive = true
     }
 ```
 
 Sync Gradle after adding the dependencies.
 
-5. Using different version of Document Reader API SDK or Face API SDK
+5. Use a different version of the Document Reader API SDK or Face API SDK
+
+The minimum versions of the Document Reader SDK and Face SDK are already included in the project. If you want to update them to the latest versions, check the release pages and use the current versions:
+
+- [Document Reader Android releases](https://github.com/regulaforensics/DocumentReader-Android/releases)
+- [Face SDK Android releases](https://github.com/regulaforensics/FaceSDK-Android/releases)
 
 ```kotlin
-// By default, DocumentReader API included into docreader module of IDV.
-// But you can change it to different version if you want use the latest version.
-implementation("com.regula.documentreader:api:9.7.+@aar") {
+// By default, the Document Reader API is included in the docreader module of IDV.
+// You can override it with a different version if you want to use the latest one.
+implementation("com.regula.documentreader:api:9.9.+@aar") {
         isTransitive = true
     }
 
-// By default, Face API included into face module of IDV.
-// But you can change it to different version if you want use the latest version.
-implementation("com.regula.face:api:8.3.+@aar") {
+// By default, the Face API is included in the face module of IDV.
+// You can override it with a different version if you want to use the latest one.
+implementation("com.regula.face:api:8.4.+@aar") {
         isTransitive = true
     }
 ```
 
-6. when you're planning to read MDL, you need to add BT Device library
+6. If you plan to read an mDL, add the BT Device library:
+
 ```kotlin
-implementation("com.regula.btdevice:api:9.1.+@aar")
+implementation("com.regula.btdevice:api:9.9.+@aar")
 ```
 
-Ensure the following permissions and features are included:
+Make sure the following permissions are included:
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -109,7 +118,7 @@ Ensure the following permissions and features are included:
 </manifest>
 ```
 
-use 'tools:remove="android:maxSdkVersion' when you're using workflow with location detection.
+Use `tools:remove="android:maxSdkVersion"` when the workflow requests the user's location.
 
 ---
 
@@ -126,13 +135,13 @@ Ensure the following permissions and features are included:
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Required only if you're going to scan documents using Camera  -->
+    <!-- Required only if you are going to scan documents using the camera -->
     <uses-permission android:name="android.permission.CAMERA"/>
 
-    <!-- Required only if you're going to read Rfid chip  -->
+    <!-- Required only if you are going to read an RFID chip -->
     <uses-permission android:name="android.permission.NFC" />
 
-    <!-- Required only if you're going to request user's location in a workflow or read mDL  -->
+    <!-- Required only if you are going to request the user's location in a workflow or read an mDL -->
     <uses-permission
         android:name="android.permission.ACCESS_COARSE_LOCATION"
         tools:remove="android:maxSdkVersion" />
@@ -147,7 +156,7 @@ Ensure the following permissions and features are included:
 
 ## **4. Initialize Regula IDV SDK**
 
-In your `MainActivity.kt`, initialize the SDK with the **Document Reader Module**:
+In your `MainActivity.kt`, initialize the SDK with the modules required by your workflow:
 
 ```kotlin
 import com.regula.idv.api.IdvSdk
@@ -158,7 +167,7 @@ import com.regula.idv.api.config.InitConfig
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val config = InitConfig(listOf(DocReaderModule(), FaceModule()))   // you can use both DocReader and Face module or only one when it's not required by workflow
+        val config = InitConfig(listOf(DocReaderModule(), FaceModule()))   // You can use both the DocReader and Face modules, or only the one required by the workflow
         IdvSdk.instance().initialize(context, config) {
             // Handle initialization result
         }
@@ -170,7 +179,7 @@ class MainActivity : AppCompatActivity() {
 
 ## **5. Configure API Settings**
 
-Before using the SDK, configure the API connection. There are 3 ways to configure the API connection:
+Before using the SDK, configure the API connection. There are three ways to do this:
 
 <details><summary>Using credentials</summary>
 
@@ -195,7 +204,7 @@ IdvSdk.instance().configure(context, CredentialsConnectionConfig(URL, USER_NAME,
 
 <details><summary>Using token</summary>
 
-Use this way when you have url with already defined auth key. In the result you will get a list of workflows id that you can perform.
+Use this option when you have a URL with an auth key already defined. The result is a list of workflow IDs that you can run.
 
 ```kotlin
 import com.regula.idv.api.config.TokenConnectionConfig
@@ -214,7 +223,7 @@ IdvSdk.instance().configure(context, TokenConnectionConfig(URL)) {
 
 </details>
 
-<details><summary>Using Api Key</summary>
+<details><summary>Using an API key</summary>
 
 ```kotlin
 import com.regula.idv.api.config.ApiKeyConnectionConfig
@@ -254,7 +263,7 @@ IdvSdk.instance().prepareWorkflow(context, PrepareWorkflowConfig(workflowId)) {
 }
 ```
 
-#### Start the workflow with default parameters when ready:
+#### Start the workflow with the default parameters:
 
 ```kotlin
 IdvSdk.instance().startWorkflow(context) {
@@ -267,7 +276,7 @@ IdvSdk.instance().startWorkflow(context) {
 }
 ```
 
-#### Set up metadata before start workflow:
+#### Set metadata before starting the workflow:
 
 
 ```kotlin
@@ -288,7 +297,7 @@ IdvSdk.instance().startWorkflow(context, config) {
 }
 ```
 
-#### With specific language:
+#### Start the workflow in a specific language:
 
 
 ```kotlin
@@ -309,12 +318,12 @@ IdvSdk.instance().startWorkflow(context, config) {
 
 ---
 
-## **7 Migration**
+## **7. Migration**
 
 ### **7.1 Migration from 2.3 to 2.4/2.5**
 
-If you used metadata when you start workflow, from 2.4 version you should use `IdvStartWorkflowConfig` config.
-See example:
+If you passed metadata when starting a workflow, use the `IdvStartWorkflowConfig` configuration starting from version 2.4.
+See the example:
 
 ```kotlin
 val metadata = JSONObject()
@@ -334,44 +343,47 @@ IdvSdk.instance().startWorkflow(this, scenarioConfig) { sessionResult, error ->
 
 ### **7.2 Migration from 2.4/2.5 to 3.1**
 
-- `IdvInitConfig` renamed to `InitConfig`.
-- `IdvConnectionConfig` renamed to `CredentialsConnectionConfig`. Also, now the first parameter is full url that includes http schema (http or https). You don't need to put IS_SECURE parameter anymore.
-- `IdvPrepareWorkflowConfig` renamed to `PrepareWorkflowConfig`.
-- `IdvStartWorkflowConfig` renamed to `StartWorkflowConfig`.
-- changed completion in `startWorkflow` method. Now it returns `Result<WorkflowResult>` object.
+- `IdvInitConfig` was renamed to `InitConfig`.
+- `IdvConnectionConfig` was renamed to `CredentialsConnectionConfig`. The first parameter is now the full URL, including the scheme (`http` or `https`). You no longer need to pass the `IS_SECURE` parameter.
+- `IdvPrepareWorkflowConfig` was renamed to `PrepareWorkflowConfig`.
+- `IdvStartWorkflowConfig` was renamed to `StartWorkflowConfig`.
+- The completion handler of `startWorkflow` has changed. The method now returns a `Result<WorkflowResult>`.
 
 ### **7.3 Migration from 3.1 to 3.2**
-- no updates require
+- No updates are required.
 
 ### **7.4 Migration from 3.2 to 3.3**
-- no updates require
+- No updates are required.
 
 ### **7.5 Migration from 3.3 to 3.4**
-- no updates require
+- No updates are required.
 
 ### **7.6 Migration from 3.4 to 3.6**
-- no updates require
+- No updates are required.
 
 ### **7.7 Migration from 3.6 to 3.8**
-- no updates require
+- No updates are required.
 
 ### **7.8 Migration from 3.8 to 3.9**
-- no updates require
+- No updates are required.
+
+### **7.9 Migration from 3.9 to 3.10**
+- No updates are required.
 
 ---
 
 ## **8. Best Practices & Troubleshooting**
 
 - **Ensure all necessary dependencies** are included in `build.gradle.kts`.
-- **Handle API failures** by checking the `workflowResult` and `exception` callbacks.
-- **Grant camera permissions** before starting the workflow.
-- **Use proper configuration** when establish connection to the platform.
+- **Handle API failures** by checking `workflowResult` in `onSuccess` and `exception` in `onFailure`.
+- **Grant camera permission** before starting the workflow.
+- **Use the correct configuration** when establishing a connection to the platform.
 
 ---
 
 
 ## **Conclusion**
 
-This guide provides all necessary steps to integrate the **Regula IDV SDK** into an Android application. By following these instructions, developers can build a document verification feature using Regula’s technology.
+This guide covers the steps required to integrate the **Regula IDV SDK** into an Android application. By following these instructions, you can build a document verification feature with Regula technology.
 
-For further details, refer to the **official Regula IDV SDK documentation** or contact support team.
+For further details, refer to the **official Regula IDV SDK documentation** or contact the support team.
